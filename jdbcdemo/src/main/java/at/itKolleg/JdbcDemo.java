@@ -8,6 +8,33 @@ public class JdbcDemo {
         System.out.println("Hello world!");
         //INSERT INTO `student` (`id`, `name`, `email`) VALUES (NULL, 'Armin Hamzic', 'armin.ha@tsn.at'), (NULL, 'Hans Wurst', 'hans.99@tsn.at');
         selectAllDemo();
+        insertStudentDemo();
+        selectAllDemo();
+    }
+
+    public static void insertStudentDemo(){
+        System.out.println("Insert DEMO mit JDBC");
+        String connectionUrl = "jdbc:mysql://localhost:3306/jdbcdemo"; //Verbindungs-Url
+        String user = "root";
+        String pwd = "";
+
+        // Verbindung zur DB aufbauen
+        try(Connection conn = DriverManager.getConnection(connectionUrl,user,pwd)){
+            System.out.println("Verbindung zur DB hergestellt!");
+            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO `student` (`id`, `name`, `email`) VALUES (NULL, ?, ?)");
+
+            try{
+                preparedStatement.setString(1,"Pap Azt");
+                preparedStatement.setString(2,"pap@hotmail.com");
+                int rowAffected = preparedStatement.executeUpdate(); //wie viele Datensätze wurden verändert
+                System.out.println(rowAffected + " Datensätze eingefügt");
+            }catch(SQLException ex){
+                System.out.println("Fehler im SQL-INSERT Statement" + ex.getMessage());
+            }
+
+        }catch(SQLException e){
+            System.out.println("Fehler beim Aufbau einer Verbindung.. " + e.getMessage());
+        }
     }
 
     public static void selectAllDemo(){
