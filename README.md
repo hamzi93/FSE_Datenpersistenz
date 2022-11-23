@@ -32,15 +32,19 @@ public static void selectAllDemo(){
         // Verbindung zur DB aufbauen
         try(Connection conn = DriverManager.getConnection(connectionUrl,"root","")){
             System.out.println("Verbindung zur DB hergestellt!");
+            //... weiterer Code im try-Block
         }catch(SQLException e){
             System.out.println("Fehler beim Aufbau einer Verbindung.. " +e.getMessage());
         }
     }
 ```
 
-Man sollte wissen welche Datensätze man braucht und wo diese zu finden sind. Um bestimmte Datensätze anzusprechen, verwendet man SQL-Statements. Um weiter mit bestimmten Datensätzen zu arbeiten sollte man diese in Variablen speichern.
+Der Vorteil die Connection wie im Code dargestellt, in runden Klammern im Kopf des try-Blocks zu schreiben ist das Verzichten einer *close()*-Methode, weil es sich automatisch schließt wenn der try-Block beendet wird.
+
+Der erste Versuch ist ein *SELECT* Statement. Man sollte wissen welche Datensätze man braucht und wo diese zu finden sind. Um weiter mit bestimmten Datensätzen zu arbeiten sollte man diese in Variablen speichern.
 
 ```java
+//... weiterer Code im try-Block
 PreparedStatement preparedStatement = conn.preparedStatement("SELECT * FROM `student`"); //SQL-Statement
 ResultSet rs = preparedStatement.executeQuery(); //rs = Ergebnismenge; executeQuery()-> Ausführung der Abfrage
 
@@ -61,4 +65,36 @@ ResultSet:
 
 * Von der Abfrage ausgehend kommt ein ResultSet zurück
 * Das ResultSet hält nun alle Datensätze 
+
+Der zweite Versuch ist ein *INSERT* Statement. Man sollte wissen, um welche Datensätze es sich handelt, damit man richtige Datentypen übergeben kann. Das anbinden an die Datenbank bleibt natürlich der gleiche Vorgang. 
+
+```java
+//... weiterer Code im try-Block
+PreparedStatement preparedStatement = conn.prepareStatement(
+    "INSERT INTO `student` (`id`, `name`, `email`) VALUES (NULL, ?, ?)");
+try{
+    preparedStatement.setString(1,"Pap Azt");
+    preparedStatement.setString(2,"pap@hotmail.com");
+    int rowAffected = preparedStatement.executeUpdate(); //wie viele Datensätze wurden verändert
+    System.out.println(rowAffected + "Datensätze eingefügt");
+}catch(SQLException ex){
+	System.out.println("Fehler im SQL-INSERT Statement" + ex.getMessage());
+}
+```
+
+Die Fragezeichen im PreparedStatement dienen als eine Art Parameter und sind gleichzeitig eine Schutzmaßnahme gegen SQL-Injections. Könnte man direkt die Daten an dieser Stelle eintragen, kann ein Bösewicht auf die Idee kommen ein anderes SQL-Statement einzutragen um Daten in der Datenbank zu verändern. Der verschachtelte try-catch-Block dient zur Fehlerüberprüfung (Wo ist der Fehler aufgetreten?). 
+
+**Versuchsprotokoll-1:**
+
+```java
+   public static void main(String[] args) {
+        selectAllDemo();
+        insertStudentDemo();
+        selectAllDemo();
+    }
+```
+
+![versuchsprotokoll1](images/versuchsprotokoll1.png)
+
+
 
