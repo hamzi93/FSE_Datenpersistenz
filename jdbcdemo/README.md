@@ -1,6 +1,6 @@
 # JDBC Intro Teil 1 - Demo-Projekt
 
-Aufgrund der durchgeführten Einrichtung einer Entwicklungsumgebung (siehe: [JDBC](/)) ist es nun möglich über das Java Programm, mittels SQL-Statements, mit einer Datenbank zu kommunizieren. Dabei ist es wichtig eine Verbindung mit der entsprechenden Datenbank aufzubauen (Url, user, pwd). 
+Aufgrund der durchgeführten Einrichtung einer Entwicklungsumgebung (siehe: [JDBC Überschrift](..)) ist es nun möglich über das Java Programm, mittels SQL-Statements, mit einer Datenbank zu kommunizieren. Dabei ist es wichtig eine Verbindung mit der entsprechenden Datenbank aufzubauen (Url, user, pwd). 
 
 ```java
 public static void selectAllDemo(){
