@@ -8,8 +8,60 @@ public class JdbcDemo {
         //INSERT INTO `student` (`id`, `name`, `email`) VALUES (NULL, 'Armin Hamzic', 'armin.ha@tsn.at'), (NULL, 'Hans Wurst', 'hans.99@tsn.at');
         selectAllDemo();
         //insertStudentDemo();
-        updateStudentDemo();
-        selectAllDemo();
+        //updateStudentDemo();
+        //deleteStudentDemo(4);
+        findAllByNameLike("min");
+        //selectAllDemo();
+    }
+
+    private static void findAllByNameLike(String pattern) {
+        System.out.println("Erweiterte Select DEMO mit JDBC");
+        String connectionUrl = "jdbc:mysql://localhost:3306/jdbcdemo"; //Verbindungs-Url
+        String user = "root";
+        String pwd = "";
+        // Verbindung zur DB aufbauen
+        try(Connection conn = DriverManager.getConnection(connectionUrl,user,pwd)){
+            System.out.println("Verbindung zur DB hergestellt!");
+
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "SELECT * FROM `student` WHERE `student`.`name` LIKE ?"); //SQL-Statement
+            preparedStatement.setString(1,"%"+pattern+"%");
+            ResultSet rs = preparedStatement.executeQuery(); //rs = Ergebnismenge; executeQuery()-> Ausführung der Abfrage
+
+            while (rs.next()){ //wenn es einen nächsten Datensatz gibt befinden wir uns in der Schleife
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                System.out.println("Student aus der DB: [ID] " + id + " [NAME] " + name + " [EMAIL] " + email);
+            }
+
+        }catch(SQLException e){
+            System.out.println("Fehler beim Aufbau einer Verbindung.. " + e.getMessage());
+        }
+    }
+
+    public static void deleteStudentDemo(int studentID){
+        System.out.println("Delete DEMO mit JDBC");
+        String connectionUrl = "jdbc:mysql://localhost:3306/jdbcdemo"; //Verbindungs-Url
+        String user = "root";
+        String pwd = "";
+
+        // Verbindung zur DB aufbauen
+        try(Connection conn = DriverManager.getConnection(connectionUrl,user,pwd)){
+            System.out.println("Verbindung zur DB hergestellt!");
+            PreparedStatement preparedStatement = conn.prepareStatement("DELETE FROM `student` WHERE `student`.`id` = ?");
+
+            try{
+                preparedStatement.setInt(1,studentID);
+                int rowAffected = preparedStatement.executeUpdate();
+                System.out.println("Anzahl der gelöschten Datensätzen " + rowAffected);
+            }catch(SQLException ex){
+                System.out.println("Fehler im SQL-DELETE Statement" + ex.getMessage());
+            }
+
+        }catch(SQLException e){
+            System.out.println("Fehler beim Aufbau einer Verbindung.. " + e.getMessage());
+        }
     }
 
     public static void updateStudentDemo(){
