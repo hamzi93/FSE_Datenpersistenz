@@ -37,8 +37,7 @@ String connUrl = "jdbc:mysql://localhost:3306/jdbcdemo"; // Verbindungs-URL
 
 Erklärung des Verbindungspfades: 
 
-* jdbc: Tabelle die man ansprechen möchte 
-* mysql: 
+* jdbc:mysql: 
 * //localhost:3306: ist der Port über den die Datenbank zur Verfügung steht
 * /jdbcdemo: ist die erstellte Datenbank-Instanz. 
 

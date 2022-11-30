@@ -48,5 +48,11 @@ Eigenschaften:
 * DAOs sind jeweils für ein spezielles Speichermedium optimiert -> Zugriff auf das Medium wird über die zu implementierende API vorgenommen
 * DAOs minimieren den Portierungsaufwand einer Anwendung beim Wechsel des Speichermediums
 
+## Singleton - Entwurfsmuster
+
+Das Singleton-Pattern soll absichern, dass von einer Klasse maximal ein Exemplar existiert. Dazu wird durch die Klasse, die als Singleton implementiert ist, ein globaler Zugriffspunkt auf die einzige Instanz bereitgestellt. Man kann nur über diesen Zugriffspunkt an eine Instanz der Singleton-Klasse gelangen. 
+
+Im Zusammenhang mit DAO ist das Singleton-Muster praktisch, da man nur einmal im Programm eine Datenbankverbindung aufrufen muss. Diese Verbindung ist dann im Singleton gespeichert und ist zur Laufzeit nicht mehr änderbar.
+
 
 
