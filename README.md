@@ -38,7 +38,7 @@ Die Entwicklungsumgebung beinhaltet einen Webserver und einen Datenbankserver mi
 
 ![entwicklungsumgebung](images/entwicklungsumgebung.png)
 
-## DAO - Entwurfsmuster
+## DAO-Entwurfsmuster
 
 Data Access Object (Datenzugriffsobjekt) ist ein Entwurfsmuster, um genauer zu sein ein Muster für die Gestaltung von Programmierschnittstellen (APIs). Über DAO können in der Folge unterschiedliche Datenquellen (Datenbanken, Dateisystem) angesprochen werden. Durch Kapselung kann die angesprochene Datenquelle ausgetauscht werden, ohne dabei den aufrufenden Code zu ändern. DAO ist eng verwandt mit dem Entwurfsmuster Transferobjekt (Spielen zusammen mit DAO, weil diese Objekte die Datensätze halten).
 
@@ -48,11 +48,18 @@ Eigenschaften:
 * DAOs sind jeweils für ein spezielles Speichermedium optimiert -> Zugriff auf das Medium wird über die zu implementierende API vorgenommen
 * DAOs minimieren den Portierungsaufwand einer Anwendung beim Wechsel des Speichermediums
 
-## Singleton - Entwurfsmuster
+## Singleton-Entwurfsmuster
 
 Das Singleton-Pattern soll absichern, dass von einer Klasse maximal ein Exemplar existiert. Dazu wird durch die Klasse, die als Singleton implementiert ist, ein globaler Zugriffspunkt auf die einzige Instanz bereitgestellt. Man kann nur über diesen Zugriffspunkt an eine Instanz der Singleton-Klasse gelangen. 
 
 Im Zusammenhang mit DAO ist das Singleton-Muster praktisch, da man nur einmal im Programm eine Datenbankverbindung aufrufen muss. Diese Verbindung ist dann im Singleton gespeichert und ist zur Laufzeit nicht mehr änderbar.
 
+## CRUD
 
+Das Akronym **CRUD** umfasst die vier grundlegenden Operationen persistenter Speicher
+
+* **C**reate, Datensatz anlegen
+* **R**ead, Datensatz lesen
+* **U**pdate, Datensatz aktualisieren
+* **D**elete oder **D**estroy, Datensatz löschen
 

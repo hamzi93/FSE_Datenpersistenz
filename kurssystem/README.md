@@ -82,3 +82,25 @@ public void setName(String name) throws InvalidValueExeption { //obwohl uncheckd
 ```
 
 Abschließend erbt die Domänenklasse `Course` alles von der `BaseEntity`-Klasse (extends) und es werden zwei Konstruktoren generiert. Einmal mit ID Übergabe und einmal ohne ID Übergabe. Eine `toString()`-Methode wird noch hinzugefügt. 
+
+## DAO-Implementierung
+
+Grundinformation über das *DAO-Entwurfsmuster* sind in der ersten README-Datei unter der Überschrift DAO - Entwurfsmuster zu finden. Hier wird das *DAO-Entwurfsmuster* angewendet.
+
+![DAO](images/DAO.png)
+
+Es wird ein `BaseRepository`-Interface erstellt um einfache Operationen mit der Datenbank ausführen zu können (siehe CRUD). Natürlich werden keine Methoden aus implementiert. Bei diesem Interface handelt es sich um das Grundkonstrukt und wird neuen Repositories angehängt. Damit ein Grunkonstrukt entstehen kann wird mit dem Datentyp `Optional` (generischer Typ) gearbeitet, das heißt man kann sich den Datentyp bei der expliziten Anwendung bzw. Methoden-Implementierung aussuchen. Dies ist praktisch, weil vielleicht wollen wir unser Programm erweitern und neue Repositories schreiben und somit andere Datentypen einfügen. 
+
+```java
+public interface BaseRepository<T, I> {
+    //T = generischer Typ -> damit kann man mit allen beliebigen Referenztypen mit java arbeiten können
+    Optional<T> insert(T entity);
+    //I = ähnlich wie T -> weil vielleicht wollen wir nicht nur ein Long eingeben können
+    Optional<T> getById (I id);
+    List<T> getAll();
+    Optional<T> update(T entity);
+    void deleteById(I id);
+}
+```
+
+Nach dem erstellten der `BaseRepository` wird nun konkretisiert, es wird zwar erneut ein Interface erstellt wird, jetzt jedoch mit der Übergabe der richtigen Datentypen für die jeweiligen Methoden. Das neue Interface erbt von `BaseRepository` und heißt `MyCourseRepository` und bezieht sich spezifischer auf die Verwendung der Tabelle *courses* der Datenbank *kurssystem*, deren Domänenklasse `Course` heißt. 
