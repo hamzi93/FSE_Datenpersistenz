@@ -9,11 +9,11 @@ Arbeitsschritte:
 1. Tabelle erstellen -> Man erstellt eine neue Tabelle und fügt die gewünschten Spalten ein.
 1. Verbindung über Quellcode (JDBC) -> Im letzten Schritt wird die Verbindung zur Datenbank mittels Java-Code ausgeführt. Dafür braucht man die richtige URL, den richtigen Usernamen und das richtige Passwort (der anzusprechenden DB). Über die Connection Klasse und der DriverManager Klasse ist es nun möglich sich mit der gewünschten Datenbank zu verbinden. 
 
-**Entwicklungsumgebung starten:**
+## Entwicklungsumgebung starten:
 
 ![xampp](images/xampp.png)
 
-**Pom.xml konfigurieren:**
+## Pom.xml konfigurieren:
 
 ```xml
 <dependency>
@@ -23,11 +23,11 @@ Arbeitsschritte:
 </dependency>
 ```
 
-**Tabelle mit 2 Spalten erstellen:**
+## Tabelle mit 2 Spalten erstellen:
 
 ![kurs_tabelle](images/kurs_tabelle.png)
 
-**Verbindung über Java:** 
+## Verbindung über Java:
 
 ```java
 String user = "root";
@@ -41,7 +41,7 @@ Erklärung des Verbindungspfades:
 * //localhost:3306: ist der Port über den die Datenbank zur Verfügung steht
 * /jdbcdemo: ist die erstellte Datenbank-Instanz. 
 
-**Ergebnis mit `INSERT`-Statement:**
+## Ergebnis mit `INSERT`-Statement:
 
 ```java
 try(Connection conn = DriverManager.getConnection(connUrl,user,pwd)) {

@@ -4,6 +4,8 @@
 
 Aufgrund der durchgeführten Einrichtung einer Entwicklungsumgebung (siehe: erstes README bei Überschrift JDBC) ist es nun möglich über das Java Programm, mittels SQL-Statements, mit einer Datenbank zu kommunizieren. Dabei ist es wichtig eine Verbindung mit der entsprechenden Datenbank aufzubauen (Url, user, pwd). 
 
+## Datenbankverbindung herstellen (inkl. `SELECT`)
+
 ```java
 public static void selectAllDemo(){
         String sqlSelectAllPersons = "SELECT * FROM `student`"; //select-statement
@@ -21,7 +23,7 @@ public static void selectAllDemo(){
 
 Der Vorteil die Connection wie im Code dargestellt, in runden Klammern im Kopf des try-Blocks zu schreiben ist das Verzichten einer `close()` Methode, weil es sich automatisch schließt wenn der try-Block beendet wird.
 
----
+## `SELECT`-Statement
 
 Der erste Versuch ist ein `SELECT` Statement (Abfrage von Daten). Man sollte wissen welche Datensätze man braucht und wo diese zu finden sind. Um weiter mit bestimmten Datensätzen zu arbeiten sollte man diese in Variablen speichern.
 
@@ -48,7 +50,7 @@ ResultSet:
 * Von der Abfrage ausgehend kommt ein ResultSet zurück
 * Das ResultSet hält nun alle Datensätze
 
----
+## `INSERT`-Statement
 
 Der zweite Versuch ist ein `INSERT` Statement (Einfügen von Daten). Man sollte wissen, um welche Datensätze es sich handelt, damit man richtige Datentypen übergeben kann. Das anbinden an die Datenbank bleibt natürlich der gleiche Vorgang. 
 
@@ -72,7 +74,7 @@ public static void insertStudentDemo(){
 
 Die Fragezeichen im PreparedStatement dienen als eine Art Parameter und sind gleichzeitig eine Schutzmaßnahme gegen SQL-Injections. Könnte man direkt die Daten an dieser Stelle eintragen, kann ein Bösewicht auf die Idee kommen ein anderes SQL-Statement einzutragen um Daten in der Datenbank zu verändern. Die Variable `rowAffected` hält die Anzahl der eingefügten Datensätze mittels der Methode `executeUpdate()`. Der verschachtelte try-catch-Block dient zur Fehlerüberprüfung (Wo ist der Fehler aufgetreten?). 
 
----
+## `UPDATE`-Statement
 
 Der dritte Versuch ist ein `UPDATE` Statement (Veränderung von Daten). Hierbei ändert sich nicht viel im Vergleich zum `INSERT` Statement, nur der SQL-Befehl ist ein anderer.
 
@@ -91,7 +93,7 @@ public static void updateStudentDemo(){
 
 Es könnten noch weitere Daten verändert werden, wie zum Beispiel die E-Mail, dann fügt man ein weiteres Fragezeichen hinzu und ruft auch für dieses die `setString()` Methode auf. Um das SQL-Statement der Datenbank zu übergeben wird erneut die Methode `executeUpdate()` aufgerufen. 
 
----
+## `DELETE`-Statement
 
 Der vierte Versuch ist ein `DELETE` Statement (Löschung von Daten). In diesem Fall mit Übergabe eines Parameters, dieser wird anschließend anstatt des Fragezeichens über das PreparedStatement weiterverarbeitet. Erneut ergibt sich eine ähnliche Struktur des Codes wie zu den Vorgängern.
 
@@ -109,7 +111,7 @@ public static void deleteStudentDemo(int studentID){
 
 Anstatt eines Strings wird nun ein Integer für die Identifizierung des Studenten gesetzt -> `setInt()`. Um das fertige SQL-Statement der Datenbank zu übergeben wird erneut die Methode `executeUpdate()` aufgerufen.
 
----
+## `SELECT`-Statement (Erweitert)
 
 Der fünfte Versuch ist ein modifiziertes `SELECT` Statement (Abfrage/Suche von Daten). Ähnlich wie beim ersten Versuch, doch diesmal mit Parameter und einem abgeänderten SQL-Statement. Zur Wiederholung: Das PreparedStatement hält unser SQL-Statement und das ResultSet hält unsere Datensätze, falls welche zurückgegeben werden.
 
@@ -127,9 +129,7 @@ private static void findAllByNameLike(String pattern) {
            //...mehr Code
 ```
 
----
-
----
+## Versuchsprotokolle
 
 **Versuchsprotokoll-1: `SELECT` und `INSERT`**
 
