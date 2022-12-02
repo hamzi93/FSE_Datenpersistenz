@@ -9,8 +9,5 @@
         <module name="kurssystem" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="kurssystem" target="1.5" />
-    </bytecodeTargetLevel>
   </component>
 </project>
