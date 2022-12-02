@@ -15,7 +15,7 @@ public class Main {
         // Datenbankverbindung über das Singleton
         try {
             Connection myConnection =
-                    MySqlDatabaseConnection.getConnection("jdbc:mysql://localhost:3306/kurssystem","root","");
+                    MySqlDatabaseConnection.getConnection("jdbc:mysql://localhost:3306/kurssystem", "root", "");
             System.out.println("Verbindung wurde hergestellt!");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
