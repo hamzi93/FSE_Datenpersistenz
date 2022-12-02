@@ -1,12 +1,17 @@
 package at.itKolleg;
 
 import at.itKolleg.dataaccess.MySqlDatabaseConnection;
+import at.itKolleg.ui.Cli;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
+        // CLI/UI
+        Cli myCli = new Cli();
+        myCli.start();
+
         // Datenbankverbindung über das Singleton
         try {
             Connection myConnection =
