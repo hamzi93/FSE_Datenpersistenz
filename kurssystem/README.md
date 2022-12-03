@@ -89,7 +89,7 @@ Grundinformation über das *DAO-Entwurfsmuster* sind in der ersten README-Datei 
 
 ![DAO](images/DAO.png)
 
-Es wird ein `BaseRepository`-Interface erstellt um einfache Operationen mit der Datenbank ausführen zu können (siehe CRUD). Natürlich werden keine Methoden aus implementiert. Bei diesem Interface handelt es sich um das Grundkonstrukt und wird neuen Repositories angehängt. Damit ein Grunkonstrukt entstehen kann wird mit dem Datentyp `Optional` (generischer Typ) gearbeitet, das heißt man kann sich den Datentyp bei der expliziten Anwendung bzw. Methoden-Implementierung aussuchen. Dies ist praktisch, weil vielleicht wollen wir unser Programm erweitern und neue Repositories schreiben und somit andere Datentypen einfügen. 
+Es wird ein `BaseRepository`-Interface erstellt um einfache Operationen mit der Datenbank ausführen zu können (siehe CRUD). Natürlich werden keine Methoden aus implementiert. Bei diesem Interface handelt es sich um das Grundkonstrukt und wird neuen Repositories angehängt. Damit ein Grundkonstrukt entstehen kann wird mit dem Datentyp `Optional` (generischer Typ) gearbeitet, das heißt man kann sich den Datentyp bei der expliziten Anwendung bzw. Methoden-Implementierung aussuchen. Dies ist praktisch, weil vielleicht wollen wir unser Programm erweitern und neue Repositories schreiben und somit andere Datentypen einfügen. 
 
 ```java
 public interface BaseRepository<T, I> {
@@ -103,4 +103,20 @@ public interface BaseRepository<T, I> {
 }
 ```
 
-Nach dem erstellten der `BaseRepository` wird nun konkretisiert, es wird zwar erneut ein Interface erstellt wird, jetzt jedoch mit der Übergabe der richtigen Datentypen für die jeweiligen Methoden. Das neue Interface erbt von `BaseRepository` und heißt `MyCourseRepository` und bezieht sich spezifischer auf die Verwendung der Tabelle *courses* der Datenbank *kurssystem*, deren Domänenklasse `Course` heißt. 
+Nach dem erstellten der `BaseRepository` wird nun konkretisiert. Es wird zwar erneut ein Interface erstellt, jetzt jedoch mit der Übergabe der richtigen Datentypen für die jeweiligen Methoden. Das neue Interface erbt (extends) von `BaseRepository` und heißt `MyCourseRepository` (= das eigentliche DAO) und bezieht sich spezifischer auf die Verwendung der Tabelle *courses* der Datenbank *kurssystem*, deren Domänenklasse `Course` heißt. Somit hat das erstellte DAO `MyCourseRpository` nun alle wichtigen Methodenköpfe (CURL) und jetzt auch getypt mit `Course` als Entitytyp und `Long` als Schlüsseltyp. Man kann nun auch weitere Methodenköpfe erstellen, um spezifischer auf die Entity einzugehen.
+
+```java
+public interface MyCourseRepository extends BaseRepository<Course,Long>{
+    // Spezifikation
+    List<Course> findAllCoursesByName(String name);
+    List<Course> finAllCoursesByDescription(String description);
+    List<Course> findAllCoursesByNameOrDescription(String searchText);
+    List<Course> findAllCoursesByCourseTyp(CourseTyp courseTyp);
+    List<Course> findAllCoursesByStartDate(Date startDate);
+    List<Course> findAllCoursesByEndDate(Date endDate);
+    List<Course> findAllRunningCourses();
+}
+```
+
+
+
