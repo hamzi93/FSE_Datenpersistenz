@@ -1,5 +1,6 @@
 package at.itKolleg;
 
+import at.itKolleg.dataaccess.MySqlCourseRepository;
 import at.itKolleg.dataaccess.MySqlDatabaseConnection;
 import at.itKolleg.ui.Cli;
 
@@ -9,8 +10,15 @@ import java.sql.SQLException;
 public class Main {
     public static void main(String[] args) {
         // CLI/UI
-        Cli myCli = new Cli();
-        myCli.start();
+        try {
+            Cli myCli = new Cli(new MySqlCourseRepository());
+            myCli.start();
+        } catch (SQLException e) {
+            System.out.println("Datenbankfehler: " + e.getMessage() + " SQL State: " + e.getSQLState());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Datenbankfehler: " + e.getMessage());
+        }
+
 
         // Datenbankverbindung über das Singleton
         try {
