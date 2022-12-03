@@ -50,13 +50,13 @@ public static void main(String[] args) {
 
 ![testprotokoll1](images/testprotokoll1.png)
 
-## CLI/UI
+## CLI/UI-Implementierung
 
 Ein einfaches CLI-Interface wird erstellt. Dabei werden dem Client vorerst nur die Eingabe eines Kurses und die Ausgabe aller Kurse angeboten. Realisiert wird die CLI mit einem `Scanner` und einer `Switch-Case`-Verzweigung. 
 
 ![ui_cli](images/ui_cli.png)
 
-## Domänenklasse
+## Domänenklasse-Implementierung
 
 Die Domänenklasse bildet mit Hilfe der Instanzvariablen eine Tabelle einer Datenbank ab. In diesem Fall ist es die Tabelle *courses* aus der Datenbank *kurssystem*.
 
@@ -87,7 +87,7 @@ Abschließend erbt die Domänenklasse `Course` alles von der `BaseEntity`-Klasse
 
 Grundinformation über das *DAO-Entwurfsmuster* sind in der ersten README-Datei unter der Überschrift DAO - Entwurfsmuster zu finden. Hier wird das *DAO-Entwurfsmuster* angewendet.
 
-![DAO](images/DAO.png)
+![DAO_Uml](images/DAO_Uml.png)
 
 Es wird ein `BaseRepository`-Interface erstellt um einfache Operationen mit der Datenbank ausführen zu können (siehe CRUD). Natürlich werden keine Methoden aus implementiert. Bei diesem Interface handelt es sich um das Grundkonstrukt und wird neuen Repositories angehängt. Damit ein Grundkonstrukt entstehen kann wird mit dem Datentyp `Optional` (generischer Typ) gearbeitet, das heißt man kann sich den Datentyp bei der expliziten Anwendung bzw. Methoden-Implementierung aussuchen. Dies ist praktisch, weil vielleicht wollen wir unser Programm erweitern und neue Repositories schreiben und somit andere Datentypen einfügen. 
 
@@ -118,5 +118,72 @@ public interface MyCourseRepository extends BaseRepository<Course,Long>{
 }
 ```
 
+## `getAll()`-Implementierung (CRUD)
 
+Die konkrete Klasse wird zuerst kreiert und es wird das DAO Interface implementiert. Alle Methoden müssen nun aus implementiert werden (auch des ersten Interfaces `BaseRepository`). Davor wird noch im Konstruktor die Datenbankverbindung definiert (JDBC). 
 
+Die erste Methode die aus implementiert wird ist die `getAll`-Methode. Es wird eine neue `DatabaseException `-Klasse erstellt, die sich ebenfalls im *dataacess*-Package befindet. Diese wird für Fehlermeldungen in Bezug auf Datenbank-Operationen sorgen (natürlich erst im Falle eines Fehlers). Die Implementierung der `getAll()`-Methode sieht sehr ähnlich wie bei den ersten Aufgaben (siehe JDBC) aus. Dafür braucht man ein `PreparedStatement`, welches ein SQL-Statement hält. Weiters wird ein `ResultSet` benötigt, um einerseits Datensätze aus der Datenbank zu entnehmen (`executeQuery()`) und andererseits für das Iterieren über alle Datensätze (`resultSet.next()`). Beim Iterieren über alle Datensätze geschieht nun objektrelationales Mapping, d.h wir wenden unsere Domänenklasse zum speichern aller Datensätze aus der Datenbank ein. 
+
+```java
+public List<Course> getAll() {
+    String sql = "SELECT * FROM `courses`";
+    try {
+        PreparedStatement preparedStatement = con.prepareStatement(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        ArrayList<Course> courseList = new ArrayList<>();
+        while (resultSet.next()) {
+            courseList.add(new Course( //hier findet objektrelationals Mapping statt
+                    resultSet.getLong("id"),
+                    resultSet.getString("name"),
+                    resultSet.getString("description"),
+                    resultSet.getInt("hour"),
+                    resultSet.getDate("begindate"),
+                    resultSet.getDate("enddate"),
+                    CourseTyp.valueOf(resultSet.getString("coursetyp"))
+                    )
+             );
+        } 
+        return courseList;
+```
+
+## Testprotokoll mit Hilfe des CLI von `getAll()`
+
+Das *CLI* wird nur das *DAO* und nicht die konkrete aus Implementierung halten, d.h es besteht keine Koppelung. Die Übergabe der konkreten *DAO*-Klasse geschieht erst in der `main()`-Methode. Das *CLI* wird nun um die `getAll()`-Methode erweitert. Die Behandlung der Exceptions geschieht erst in der `main()`-Methode in einem *try-catch-Block*. 
+
+```java
+private void showAllcourses() {
+    List<Course> list = null;
+
+    try {
+        list = repo.getAll();
+        if (list.size() > 0) {
+            for (Course course : list) {
+                System.out.println(course); // toString-Methode wird aufgerufen
+            }
+        } else {
+            System.out.println("Kursliste ist leer!");
+        }
+    } catch (DatabaseException databaseException){
+        System.out.println("Datenbankfehler bei Anzeige aller Kurse: " + databaseException.getMessage());
+    } catch (Exception exception){ // alle anderen Exceptions
+        System.out.println("Unbekannter Fehler bei Anzeigen aller Kurse " + exception.getMessage());
+    }
+}
+```
+
+Die `showAllCourses()`-Methode ist eine interne Methode der Klasse `CLI` und ist die erwähnte Erweiterung des *CLI*.
+
+```java
+public static void main(String[] args) {
+    // CLI/UI
+    try {
+        Cli myCli = new Cli(new MySqlCourseRepository());
+        myCli.start();
+    } catch (SQLException e) {
+        System.out.println("Datenbankfehler: " + e.getMessage() + " SQL State: " + e.getSQLState());
+    } catch (ClassNotFoundException e) {
+        System.out.println("Datenbankfehler: " + e.getMessage());
+    }
+```
+
+![testprotokoll2](images/testprotokoll2.png)
