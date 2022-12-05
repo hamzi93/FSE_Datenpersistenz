@@ -118,7 +118,7 @@ public interface MyCourseRepository extends BaseRepository<Course,Long>{
 }
 ```
 
-## `getAll()`-Implementierung (CRUD)
+## CRUD-Methoden Implementierung (CLI - konkrete Klasse)
 
 Die konkrete Klasse wird zuerst kreiert und es wird das DAO Interface implementiert. Alle Methoden müssen nun aus implementiert werden (auch des ersten Interfaces `BaseRepository`). Davor wird noch im Konstruktor die Datenbankverbindung definiert (JDBC). 
 
@@ -146,9 +146,9 @@ public List<Course> getAll() {
         return courseList;
 ```
 
-## Testprotokoll mit Hilfe des CLI von `getAll()`
+## Testprotokoll - CLI und `getAll()`
 
-Das *CLI* wird nur das *DAO* und nicht die konkrete aus Implementierung halten, d.h es besteht keine Koppelung. Die Übergabe der konkreten *DAO*-Klasse geschieht erst in der `main()`-Methode. Das *CLI* wird nun um die `getAll()`-Methode erweitert. Die Behandlung der Exceptions geschieht erst in der `main()`-Methode in einem *try-catch-Block*. 
+Das *CLI* wird nur das *DAO* und nicht die konkrete aus Implementierung halten, d.h es besteht keine Koppelung. Die Übergabe der konkreten *DAO*-Klasse geschieht erst in der `main()`-Methode. Das *CLI* wird nun um die `getAll()`-Methode erweitert. Die Behandlung der *Exceptions* geschieht erst in der `main()`-Methode in einem *try-catch-Block*. 
 
 ```java
 private void showAllcourses() {
@@ -187,3 +187,88 @@ public static void main(String[] args) {
 ```
 
 ![testprotokoll2](images/testprotokoll2.png)
+
+## Testprotokoll - CLI und `getById()`
+
+Für die Implementierung der `getById()`-Methode wird eine Utility-Klasse erstellt -> diese Hilft im weiteren Verlauf mit der `null`-Abfrage, bei allen weiteren Methoden. Weiters wird eine interne Methode für die Abfrage eines Datensatzes über die ID geschrieben (Gibt es einen Datensatz mit der entsprechenden ID).  
+
+```java
+public Optional<Course> getById(Long id) {
+    Assert.notNull(id); //null check mit einer Utilityklasse
+    if (countCoursesInDbWithId(id) == 0) {
+        return Optional.empty();
+    }
+```
+
+Hier sieht man die beschriebenen Schritte (Nullcheck -> mit `Assert`-Klasse und die Abfrage ob sich ein Datensatz mit entsprechender ID in der Datenbank befindet `countCoursesInDbWithId()`). Nach diesen wichtigen Abfragen kommt die Übergabe des Datensatzes in unsere Domänenklasse `Course`. Abschließend wird ein `Optional` als Rückgabewert zurückgegeben (`Optional.of(course)`). 
+
+Für die Implementierung des *CLI* wird ebenfalls mit einem `Optional` gearbeitet. Doch die Komplexität ist ab hier nicht mehr wirklich hoch, da bei der aus Implementierung nur noch Methoden anderer Klassen aufgerufen werden müssen. 
+
+```java
+private void showCourseDetails() {
+    System.out.println("Für welchen Kurs möchten Sie die Kursdetails anzeigen?");
+    Long courseId = Long.parseLong(scan.nextLine());
+
+    try {
+        Optional<Course> courseOptional = repo.getById(courseId);
+        if(courseOptional.isPresent()){
+            System.out.println(courseOptional.get());
+
+        } else {
+            System.out.println("Kurs mit der ID " + courseId + " nicht gefunden");
+        }
+```
+
+![testprotokoll3](images/testprotokoll3.png)
+
+## Testprotokoll - CLI und `create()`
+
+Diesmal geschieht das Mapping anders herum (von der objektorientierten Welt in die Datenbank). Ähnlicher Aufbau wie bei den Methoden zuvor. Da es sich aber nun um Client Eingaben handelt, sollte man im *CLI* zusätzlich zu den *Exceptions* noch eine *UI* Validierung machen (ist aber kein muss), um auf Eingabefehler konkreter zu reagieren.
+
+Die Implementierung in der konkreten *DAO*-Klasse bezieht sich erneut auf unsere Domänenklasse. Hier will man die Eingaben vom Client entgegennehmen (nach der Validierung des *CLI*). Eine Besonderheit ist die `RETURN_GENERATED_KEYS`-Methode die uns einen generierten Schlüssel zurück liefert. Dieser wird abschließend mit Hilfe der Methode `getById()` beim Rückgabewert aufgerufen um einen `Course` zurück zu geben. Der zurückgegebene Kurs ist schon der angelegte Kurs, dieser wurde einfach wieder aus der Datenbank aufgerufen. 
+
+```java
+try {
+    String sql = "INSERT INTO `courses` (`name`, `description`, `hours`, `begindate`, `enddate`, `coursetype`) VALUES (?,?,?,?,?,?)";
+    PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+    
+    //... mehr Code
+    
+     ResultSet generatedKeys = preparedStatement.getGeneratedKeys(); //keys zurückholen
+     if(generatedKeys.next()){
+         return this.getById(generatedKeys.getLong(1));
+      }else {
+      	 return Optional.empty();
+      }
+```
+
+![testprotokoll4](images/testprotokoll4.png)
+
+## Testprotokoll - CLI und `update()`
+
+!Tipp! Um ein *SQL*-Statement schnell zu bekommen, kann man in den phpmyadmin schauen und sich über *bearbeiten* (beim entsprechenden Datensatz) eine *SQL*-Vorschau generieren lassen. So ändert man einfach alle Werte und klickt auf die *SQL*-Vorschau um sich das fertige *SQL*-Statement (in diesem Fall `UPDATE`) abzuholen. 
+
+Die `update()`-Methode in der konkreten *DAO*-Klasse sieht ähnlich wie die `create()`-Methode aus. Natürlich ist diesmal das *SQL*-Statement kein `INSERT`, sondern ein `UPDATE`. 
+
+Im *CLI* werden ein paar Tricks angewendet. Man holt sich alle Eingaben des Clients in der Form eines *Strings*. Da man ja vielleicht nicht alles im Datensatz ändern möchte, kann der Client mit dem Drücken auf *ENTER* eine Spalte auslassen und nicht verändern. In der darauffolgenden Abfrage, ob der Client nun Änderungen vorgenommen hat, setzt man den erwähnten Trick ein. 
+
+```java
+Optional<Course> optionalCourseUpdated = repo.update(
+        new Course(
+                course.getId(),
+                name.equals("") ? course.getName() : name,
+                description.equals("") ? course.getDescription() : description,
+                hours.equals("") ? course.getHours() : Integer.parseInt(hours),
+                dateFrom.equals("") ? course.getBeginDate() : Date.valueOf(dateFrom),
+                dateTo.equals("") ? course.getEndDate() : Date.valueOf(dateTo),
+                courseTyp.equals("") ? course.getCourseTyp() : CourseTyp.valueOf(courseTyp)
+        )
+);
+```
+
+Mit der Kurzschreibweise `?` kann man eine `if-else` Verzweigung nachbauen. Bei Veränderung der Daten wird dann der richtige Datentyp mitgegeben und man umgeht so das Problem einer leeren Eingabe (wegen *ENTER*).
+
+![testprotokoll5](images/testprotokoll5.png)
+
+## Testprotokoll - CLI und `delete()`
+
