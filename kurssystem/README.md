@@ -272,3 +272,25 @@ Mit der Kurzschreibweise `?` kann man eine `if-else` Verzweigung nachbauen. Bei 
 
 ## Testprotokoll - CLI und `delete()`
 
+Die letzte CRUD-Methode ist die `delete()`-Methode für das Löschen eines Datensatzes. Der Code zeigt die Methode in der konkreten *DAO*-Klasse.
+
+```java
+public void deleteById(Long id) {
+    Assert.notNull(id); //null check
+    String sql = "DELETE FROM `courses` WHERE `id` = ?";
+    try {
+        if (countCoursesInDbWithId(id) == 1){
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+        }
+
+    }catch (SQLException sqlException){
+        throw new DatabaseException(sqlException.getMessage());
+    }
+}
+```
+
+Kein Fehler, aber ein Verbesserungsvorschlag, wäre einen Rückgabewert zu definieren. Immerhin weiß man nicht im *CLI*, ob die Methode erfolgreich war (man könnte auch nichts gelöscht haben -> siehe Testprotokoll). Noch einfacher als die eben gezeigte Methode, ist die `delete`-Methode im *CLI*. Dabei wird nur der Wert des Clients übergeben und anschließend in die `delete`-Methode der konkreten *DAO*-Klasse übergeben und ausgewertet. Ähnlich wie bei der konkreten *DAO*-Klasse könnte man auch in der *CLI*-Klasse eine Überprüfung machen ob es den erwähnten Datensatz überhaupt gibt.
+
+![testprotokoll6](images/testprotokoll6.png)
