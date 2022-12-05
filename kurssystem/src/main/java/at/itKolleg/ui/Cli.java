@@ -5,6 +5,7 @@ import at.itKolleg.dataaccess.MyCourseRepository;
 import at.itKolleg.domain.Course;
 import at.itKolleg.domain.CourseTyp;
 import at.itKolleg.domain.InvalidValueExeption;
+import jdk.jshell.spi.ExecutionControl;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +44,10 @@ public class Cli {
                     // Kursdetails ändern
                     updateCourseDetails();
                     break;
+                case "5":
+                    // Kurs löschen
+                    deleteCourse();
+                    break;
                 case "x":
                     System.out.println("Aufwiedersehen!");
                     break;
@@ -52,6 +57,19 @@ public class Cli {
             }
         }
         scan.close();
+    }
+
+    private void deleteCourse() {
+        System.out.println("Welchen Kurs möchten Sie löschen? Bitte ID eingeben: ");
+        Long courseIdToDelete = Long.parseLong(scan.nextLine());
+
+        try {
+            repo.deleteById(courseIdToDelete);
+        } catch (DatabaseException databaseException) {
+            System.out.println("Datenbankfehler beim Löschen: " + databaseException.getMessage());
+        } catch (Exception exception) {
+            System.out.println("Unbekannter Fehler beim Löschen: " + exception.getMessage());
+        }
     }
 
     private void updateCourseDetails() {
@@ -97,13 +115,19 @@ public class Cli {
                 );
 
                 optionalCourseUpdated.ifPresentOrElse(
-                        (c)-> System.out.println("Kurs aktualisiert: " + c),
-                        ()-> System.out.println("Kurs konnte nicht aktualisiert werden!")
+                        (c) -> System.out.println("Kurs aktualisiert: " + c),
+                        () -> System.out.println("Kurs konnte nicht aktualisiert werden!")
                 );
             }
 
+        } catch (IllegalArgumentException illegalArgumentException) {
+            System.out.println("Eingabefehler:  " + illegalArgumentException.getMessage());
+        } catch (InvalidValueExeption invalidValueExeption) {
+            System.out.println("Kursdaten nicht korrekt angegeben: " + invalidValueExeption.getMessage());
+        } catch (DatabaseException databaseException) {
+            System.out.println("Datenbankfehler beim Einfügen: " + databaseException.getMessage());
         } catch (Exception exception) {
-            System.out.println("Unbekannter Fehler bei Kursupdate: " + exception.getMessage());
+            System.out.println("Unbekannter Fehler beim Einfügen: " + exception.getMessage());
         }
     }
 
@@ -196,7 +220,7 @@ public class Cli {
     private void showMenu() {
         System.out.println("-------------- KURSMANAGEMENT ---------------");
         System.out.println("(1) Kurs eingeben \t (2) Alle Kurse anzeigen \t (3) Kursdetails anzeigen");
-        System.out.println("(4) Kursdetails ändern \t () xxx \t () xxx");
+        System.out.println("(4) Kursdetails ändern \t (5) Kurs löschen\t () xxx");
         System.out.println("(x) ENDE");
     }
 }
