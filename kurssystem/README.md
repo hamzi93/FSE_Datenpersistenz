@@ -294,3 +294,27 @@ public void deleteById(Long id) {
 Kein Fehler, aber ein Verbesserungsvorschlag, wäre einen Rückgabewert zu definieren. Immerhin weiß man nicht im *CLI*, ob die Methode erfolgreich war (man könnte auch nichts gelöscht haben -> siehe Testprotokoll). Noch einfacher als die eben gezeigte Methode, ist die `delete`-Methode im *CLI*. Dabei wird nur der Wert des Clients übergeben und anschließend in die `delete`-Methode der konkreten *DAO*-Klasse übergeben und ausgewertet. Ähnlich wie bei der konkreten *DAO*-Klasse könnte man auch in der *CLI*-Klasse eine Überprüfung machen ob es den erwähnten Datensatz überhaupt gibt.
 
 ![testprotokoll6](images/testprotokoll6.png)
+
+## Testprotokoll - CLI und weitere Spezialfälle
+
+Nach den CRUD-Methoden, kommen nun zwei weitere Methoden die aus dem Kurs-*DAO* Interface stammen. Diese werden nun aus implementiert und heißen, `findAllCoursesByNameOrDescription()` und `findAllRunningCourses()`.
+
+Allgemein ändert sich nicht viel zu den Vorgänger-Methoden. In der `findAllCoursesByNameOrDescription()`-Methode wird nach Namen und Beschreibung aller Kurse gesucht.  Das *SQL*-Statement sieht wie folgt aus: 
+
+```java
+String sql = "SELECT * FROM `courses` WHERE LOWER(`descripton`) LIKE LOWER(?) OR LOWER(`name`) LIKE LOWER(?)";
+```
+
+Die Suche nach den folgenden Sucheingaben soll wirklich die Datenbank mit dem entsprechenden *SQL*-Statement durchführen, damit die eigentliche Suche ausgelagert werden kann. Zum Schluss muss man noch diese Erweiterung dem *CLI* mitteilen bzw. ebenfalls eine entsprechende Methode implementieren um diese ausführen zu können. 
+
+![testprotokoll7](images/testprotokoll7.png)
+
+Die letzte Methode heißt `findAllRunningCourses()` und liefert alle aktuell laufenden Kurse. Die ganze Business-Logik steckt im *SQL*-Statement.
+
+```java
+String sql = "SELECT * FROM `courses` WHERE NOW()<`enddate`";
+```
+
+Erneut darf man nicht die Implementierung in der CLI-Klasse vergessen. Abschließend wird ein letztes mal getestet.
+
+![testprotokoll8](images/testprotokoll8.png)
