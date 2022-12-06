@@ -1,4 +1,4 @@
-package util;
+package at.itKolleg.util;
 
 public class Assert {
     public static void notNull(Object o){
