@@ -14,7 +14,7 @@ Alle aufgelisteten Aufgaben sind hier zu finden: [Der Übungszettel](JDBC_Uebung
 
 [Aufgabe 3: JDBC und DAO - Kurse](kurssystem)
 
-[Aufgabe 4: JDBC und DAO - Studenten]()
+[Aufgabe 4: JDBC und DAO - Studenten](kurssystem/Readme_Aufgabe_Studenten.md)
 
 [Aufgabe 5: JDBC und DAO - Buchungen]()
 
