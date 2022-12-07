@@ -223,7 +223,7 @@ public class MySqlCourseRepository implements MyCourseRepository {
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             ArrayList<Course> courseList = new ArrayList<>();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 courseList.add(new Course(
                                 resultSet.getLong("id"),
                                 resultSet.getString("name"),
@@ -236,7 +236,7 @@ public class MySqlCourseRepository implements MyCourseRepository {
                 );
             }
             return courseList;
-        }catch (SQLException sqlException){
+        } catch (SQLException sqlException) {
             throw new DatabaseException(sqlException.getMessage());
         }
     }
