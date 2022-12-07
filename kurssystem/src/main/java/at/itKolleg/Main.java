@@ -2,17 +2,20 @@ package at.itKolleg;
 
 import at.itKolleg.dataaccess.MySqlCourseRepository;
 import at.itKolleg.dataaccess.MySqlDatabaseConnection;
+import at.itKolleg.dataaccess.MySqlStudentRepository;
 import at.itKolleg.ui.Cli;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+
 public class Main {
     public static void main(String[] args) {
         // CLI/UI
+
         try {
-            Cli myCli = new Cli(new MySqlCourseRepository());
-            myCli.start();
+            Cli myCli = new Cli(new MySqlCourseRepository(), new MySqlStudentRepository());
+            myCli.studentStart();
         } catch (SQLException e) {
             System.out.println("Datenbankfehler: " + e.getMessage() + " SQL State: " + e.getSQLState());
         } catch (ClassNotFoundException e) {
@@ -31,4 +34,5 @@ public class Main {
             throw new RuntimeException(e);
         }
     }
+
 }
